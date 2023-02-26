@@ -41,7 +41,7 @@ const displayData = (phones, dataLimit) => {
             <h2 class="card-title">${phone_name}</h2>
             <p>Brand: ${brand}</p>
             <div class="card-actions justify-end">
-            <button class="btn btn-primary">Buy Now</button>
+            <label for="my-modal" onclick="detailsButton('${slug}')" class="btn btn-primary">Show Details</label>
             </div>
             </div>
         </div>
@@ -59,6 +59,63 @@ const processData = (dataLimit) => {
 seeMore.addEventListener("click", function () {
   processData();
 });
+
+const detailsButton = async (id) => {
+  const url = `https://openapi.programming-hero.com/api/phone/${id}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    displayPhoneDetails(data.data);
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+const displayPhoneDetails = (phoneDetails) => {
+  console.log(phoneDetails);
+  const divModal = document.getElementById("modal");
+  divModal.innerHTML = `
+  
+            <h3 class="font-bold text-lg">
+              Brand: ${phoneDetails.brand}
+            </h3>
+            <img src="${phoneDetails.image}" alt="" >
+            <p class="py-2">
+              Storage: ${phoneDetails.mainFeatures.storage}
+            </p>
+            <p class="py-2">
+              Display Size: ${phoneDetails.mainFeatures.displaySize}
+            </p>
+            <p class="py-2">
+              Memory: ${phoneDetails.mainFeatures.memory}
+            </p>
+            <p class="py-2">
+              Bluetooth: ${phoneDetails?.others?.Bluetooth}
+            </p>
+            <p class="py-2">
+              GPS: ${phoneDetails?.others?.GPS}
+            </p>
+            <p class="py-2">
+              USB: ${phoneDetails?.others?.USB}
+            </p>
+            <p class="py-2">
+              Release Date: ${
+                phoneDetails.releaseDate
+                  ? phoneDetails.releaseDate
+                  : "No release date found"
+              }
+            </p>
+            <p class="py-2">
+              Sensors: ${phoneDetails?.mainFeatures?.sensors?.map((sensor) => {
+                return `<span>${sensor}</span>`;
+              })}
+            </p>
+            <div class="modal-action">
+              <label for="my-modal" class="btn">Yay!</label>
+            </div>
+  `;
+};
 
 document.getElementById("search-field").addEventListener("keyup", function (e) {
   if (e.key === "Enter") {
